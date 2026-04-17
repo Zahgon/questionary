@@ -41,95 +41,7 @@ def parse_question_config(
     Returns:
         A question to be asked and a callable to handle the answer
     """
-    question_config = dict(question_config)
-    # import the question
-    if "type" not in question_config:
-        raise PromptParameterException("type")
-    # every type except 'print' needs a name
-    if "name" not in question_config and question_config["type"] != "print":
-        raise PromptParameterException("name")
-
-    _kwargs = kwargs.copy()
-    _kwargs.update(question_config)
-
-    _type = _kwargs.pop("type")
-    _filter = _kwargs.pop("filter", None)
-    name = _kwargs.pop("name", None) if _type == "print" else _kwargs.pop("name")
-    when = _kwargs.pop("when", None)
-
-    if true_color:
-        _kwargs["color_depth"] = ColorDepth.TRUE_COLOR
-
-    if when:
-        # at least a little sanity check!
-        if callable(question_config["when"]):
-            try:
-                if not question_config["when"](answers):
-                    return None
-            except Exception as exception:
-                raise ValueError(
-                    f"Problem in 'when' check of " f"{name} question: {exception}"
-                ) from exception
-        else:
-            raise ValueError("'when' needs to be function that accepts a dict argument")
-
-    # handle 'print' type
-    if _type == "print":
-        try:
-            message = _kwargs.pop("message")
-        except KeyError as e:
-            raise PromptParameterException("message") from e
-
-        # questions can take 'input' arg but print_formatted_text does not
-        # Remove 'input', if present, to avoid breaking during tests
-        _kwargs.pop("input", None)
-
-        print_formatted_text(message, **_kwargs)
-        if name:
-            answers[name] = None
-        return None
-
-    choices = question_config.get("choices")
-    if choices is not None and callable(choices):
-        calculated_choices = choices(answers)
-        question_config["choices"] = calculated_choices
-        _kwargs["choices"] = calculated_choices
-
-    if _filter:
-        # at least a little sanity check!
-        if not callable(_filter):
-            raise ValueError("'filter' needs to be function that accepts an argument")
-
-    if callable(question_config.get("default")):
-        _kwargs["default"] = question_config["default"](answers)
-
-    create_question_func = prompt_by_name(_type)
-
-    if not create_question_func:
-        raise ValueError(
-            f"No question type '{_type}' found. "
-            f"Known question types are {', '.join(AVAILABLE_PROMPTS)}."
-        )
-
-    missing_args = list(utils.missing_arguments(create_question_func, _kwargs))
-    if missing_args:
-        raise PromptParameterException(missing_args[0])
-
-    question = create_question_func(**_kwargs)
-
-    def on_answer(answer):
-        if answer is not None:
-            if _filter:
-                try:
-                    answer = _filter(answer)
-                except Exception as exception:
-                    raise ValueError(
-                        f"Problem processing 'filter' of {name} "
-                        f"question: {exception}"
-                    ) from exception
-            answers[name] = answer
-
-    return question, on_answer
+    pass
 
 
 async def prompt_async(
@@ -183,14 +95,7 @@ async def prompt_async(
     Returns:
         Dictionary of question answers.
     """
-
-    try:
-        return await unsafe_prompt_async(
-            questions, answers, patch_stdout, true_color, **kwargs
-        )
-    except KeyboardInterrupt:
-        print(kbi_msg)
-        return {}
+    pass
 
 
 def prompt(
@@ -244,12 +149,7 @@ def prompt(
     Returns:
         Dictionary of question answers.
     """
-
-    try:
-        return unsafe_prompt(questions, answers, patch_stdout, true_color, **kwargs)
-    except KeyboardInterrupt:
-        print(kbi_msg)
-        return {}
+    pass
 
 
 async def unsafe_prompt_async(
@@ -302,27 +202,7 @@ async def unsafe_prompt_async(
     Raises:
         KeyboardInterrupt: raised on keyboard interrupt
     """
-
-    if isinstance(questions, dict):
-        questions = [questions]
-
-    answers = dict(answers or {})
-
-    for question_config in questions:
-        res = parse_question_config(
-            question_config, answers, patch_stdout, true_color, **kwargs
-        )
-
-        if res is None:
-            continue
-
-        (question, on_answer) = res
-
-        answer = await question.unsafe_ask_async(patch_stdout)
-
-        on_answer(answer)
-
-    return answers
+    pass
 
 
 def unsafe_prompt(
@@ -375,24 +255,4 @@ def unsafe_prompt(
     Raises:
         KeyboardInterrupt: raised on keyboard interrupt
     """
-
-    if isinstance(questions, dict):
-        questions = [questions]
-
-    answers = dict(answers or {})
-
-    for question_config in questions:
-        res = parse_question_config(
-            question_config, answers, patch_stdout, true_color, **kwargs
-        )
-
-        if res is None:
-            continue
-
-        (question, on_answer) = res
-
-        answer = question.unsafe_ask(patch_stdout)
-
-        on_answer(answer)
-
-    return answers
+    pass

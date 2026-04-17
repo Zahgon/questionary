@@ -37,13 +37,7 @@ class Question:
         Returns:
             `Any`: The answer from the question.
         """
-
-        try:
-            sys.stdout.flush()
-            return await self.unsafe_ask_async(patch_stdout)
-        except KeyboardInterrupt:
-            print("{}".format(kbi_msg))
-            return None
+        pass
 
     def ask(
         self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
@@ -59,12 +53,7 @@ class Question:
         Returns:
             `Any`: The answer from the question.
         """
-
-        try:
-            return self.unsafe_ask(patch_stdout)
-        except KeyboardInterrupt:
-            print("{}".format(kbi_msg))
-            return None
+        pass
 
     def unsafe_ask(self, patch_stdout: bool = False) -> Any:
         """Ask the question synchronously and return user response.
@@ -78,15 +67,7 @@ class Question:
         Returns:
             `Any`: The answer from the question.
         """
-
-        if self.should_skip_question:
-            return self.default
-
-        if patch_stdout:
-            with prompt_toolkit.patch_stdout.patch_stdout():
-                return self.application.run()
-        else:
-            return self.application.run()
+        pass
 
     def skip_if(self, condition: bool, default: Any = None) -> "Question":
         """Skip the question if flag is set and return the default instead.
@@ -98,10 +79,7 @@ class Question:
         Returns:
             :class:`Question`: `self`.
         """
-
-        self.should_skip_question = condition
-        self.default = default
-        return self
+        pass
 
     async def unsafe_ask_async(self, patch_stdout: bool = False) -> Any:
         """Ask the question using asyncio and return user response.
@@ -115,20 +93,4 @@ class Question:
         Returns:
             `Any`: The answer from the question.
         """
-
-        if self.should_skip_question:
-            return self.default
-
-        if not utils.ACTIVATED_ASYNC_MODE:
-            await utils.activate_prompt_toolkit_async_mode()
-
-        if patch_stdout:
-            with prompt_toolkit.patch_stdout.patch_stdout():
-                r = self.application.run_async()
-        else:
-            r = self.application.run_async()
-
-        if utils.is_prompt_toolkit_3():
-            return await r
-        else:
-            return await r.to_asyncio_future()  # type: ignore[attr-defined]
+        pass

@@ -33,29 +33,4 @@ def press_any_key_to_continue(
     Returns:
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
     """
-    merged_style = merge_styles_default([style])
-
-    if message is None:
-        message = "Press any key to continue..."
-
-    def get_prompt_tokens():
-        tokens = []
-
-        tokens.append(("class:question", f" {message} "))
-
-        return to_formatted_text(tokens)
-
-    def exit_with_result(event):
-        event.app.exit(result=None)
-
-    bindings = KeyBindings()
-
-    @bindings.add(Keys.Any)
-    def any_key(event):
-        exit_with_result(event)
-
-    return Question(
-        PromptSession(
-            get_prompt_tokens, key_bindings=bindings, style=merged_style, **kwargs
-        ).app
-    )
+    pass

@@ -42,61 +42,20 @@ class WordCompleter(Completer):
         self.match_middle = match_middle
 
     def _choices(self) -> Iterable[str]:
-        return (
-            self.choices_source()
-            if callable(self.choices_source)
-            else self.choices_source
-        )
+        pass
 
     def _choice_matches(self, word_before_cursor: str, choice: str) -> int:
         """Match index if found, -1 if not."""
-
-        if self.ignore_case:
-            choice = choice.lower()
-
-        if self.match_middle:
-            return choice.find(word_before_cursor)
-        elif choice.startswith(word_before_cursor):
-            return 0
-        else:
-            return -1
+        pass
 
     @staticmethod
     def _display_for_choice(choice: str, index: int, word_before_cursor: str) -> HTML:
-        return HTML("{}<b><u>{}</u></b>{}").format(
-            choice[:index],
-            choice[index : index + len(word_before_cursor)],  # noqa: E203
-            choice[index + len(word_before_cursor) : len(choice)],  # noqa: E203
-        )
+        pass
 
     def get_completions(
         self, document: Document, complete_event: CompleteEvent
     ) -> Iterable[Completion]:
-        choices = self._choices()
-
-        # Get word/text before cursor.
-        word_before_cursor = document.text_before_cursor
-
-        if self.ignore_case:
-            word_before_cursor = word_before_cursor.lower()
-
-        for choice in choices:
-            index = self._choice_matches(word_before_cursor, choice)
-            if index == -1:
-                # didn't find a match
-                continue
-
-            display_meta = self.meta_information.get(choice, "")
-            display = self._display_for_choice(choice, index, word_before_cursor)
-
-            yield Completion(
-                choice,
-                start_position=-len(choice),
-                display=display.formatted_text,
-                display_meta=display_meta,
-                style="class:answer",
-                selected_style="class:selected",
-            )
+        pass
 
 
 def autocomplete(
@@ -175,40 +134,4 @@ def autocomplete(
     Returns:
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
     """
-    merged_style = merge_styles_default([style])
-
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
-        return [("class:qmark", qmark), ("class:question", " {} ".format(message))]
-
-    def get_meta_style(meta: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-        if meta:
-            for key in meta:
-                meta[key] = HTML("<text>{}</text>").format(meta[key])
-
-        return meta
-
-    validator = build_validator(validate)
-
-    if completer is None:
-        if not choices:
-            raise ValueError("No choices is given, you should use Text question.")
-        # use the default completer
-        completer = WordCompleter(
-            choices,
-            ignore_case=ignore_case,
-            meta_information=get_meta_style(meta_information),
-            match_middle=match_middle,
-        )
-
-    p: PromptSession = PromptSession(
-        get_prompt_tokens,
-        lexer=SimpleLexer("class:answer"),
-        style=merged_style,
-        completer=completer,
-        validator=validator,
-        complete_style=complete_style,
-        **kwargs,
-    )
-    p.default_buffer.reset(Document(default))
-
-    return Question(p.app)
+    pass

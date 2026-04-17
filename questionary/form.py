@@ -29,7 +29,7 @@ def form(**kwargs: Question) -> "Form":
     Args:
         kwargs: Questions to ask in the form.
     """
-    return Form(*(FormField(k, q) for k, q in kwargs.items()))
+    pass
 
 
 class Form:
@@ -57,7 +57,7 @@ class Form:
         Returns:
             The answers from the form.
         """
-        return {f.key: f.question.unsafe_ask(patch_stdout) for f in self.form_fields}
+        pass
 
     async def unsafe_ask_async(self, patch_stdout: bool = False) -> Dict[str, Any]:
         """Ask the questions using asyncio and return user response.
@@ -71,10 +71,7 @@ class Form:
         Returns:
             The answers from the form.
         """
-        return {
-            f.key: await f.question.unsafe_ask_async(patch_stdout)
-            for f in self.form_fields
-        }
+        pass
 
     def ask(
         self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
@@ -90,11 +87,7 @@ class Form:
         Returns:
             The answers from the form.
         """
-        try:
-            return self.unsafe_ask(patch_stdout)
-        except KeyboardInterrupt:
-            print(kbi_msg)
-            return {}
+        pass
 
     async def ask_async(
         self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
@@ -110,8 +103,4 @@ class Form:
         Returns:
             The answers from the form.
         """
-        try:
-            return await self.unsafe_ask_async(patch_stdout)
-        except KeyboardInterrupt:
-            print(kbi_msg)
-            return {}
+        pass

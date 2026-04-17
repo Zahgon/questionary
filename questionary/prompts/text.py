@@ -75,27 +75,4 @@ def text(
     Returns:
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
     """
-    merged_style = merge_styles_default([style])
-    lexer = lexer or SimpleLexer("class:answer")
-    validator = build_validator(validate)
-
-    if instruction is None and multiline:
-        instruction = INSTRUCTION_MULTILINE
-
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
-        result = [("class:qmark", qmark), ("class:question", " {} ".format(message))]
-        if instruction:
-            result.append(("class:instruction", " {} ".format(instruction)))
-        return result
-
-    p: PromptSession = PromptSession(
-        get_prompt_tokens,
-        style=merged_style,
-        validator=validator,
-        lexer=lexer,
-        multiline=multiline,
-        **kwargs,
-    )
-    p.default_buffer.reset(Document(default))
-
-    return Question(p.app)
+    pass

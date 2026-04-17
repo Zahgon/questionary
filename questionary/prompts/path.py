@@ -91,27 +91,7 @@ class GreatUXPathCompleter(PathCompleter):
         for directories end with a path separator. Also make sure the right path
         separator is used.
         """
-        completions = super(GreatUXPathCompleter, self).get_completions(
-            document, complete_event
-        )
-
-        for completion in completions:
-            # check if the display value ends with a path separator.
-            # first check if display is properly set
-            styled_display = completion.display[0]
-            # styled display is a formatted text (a tuple of the text and its style)
-            # second tuple entry is the text
-            if styled_display[1][-1] == "/":
-                # replace separator with the OS specific one
-                display_text = styled_display[1][:-1] + os.path.sep
-                # update the styled display with the modified text
-                completion.display[0] = (styled_display[0], display_text)
-                # append the separator to the text as well - unclear why the normal
-                # path completer omits it from the text. this improves UX for the
-                # user, as they don't need to type the separator after auto-completing
-                # a directory
-                completion.text += os.path.sep
-            yield completion
+        pass
 
 
 def path(
@@ -187,58 +167,4 @@ def path(
     Returns:
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
     """  # noqa: W505, E501
-    merged_style = merge_styles_default([style])
-
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
-        return [("class:qmark", qmark), ("class:question", " {} ".format(message))]
-
-    validator = build_validator(validate)
-
-    completer = completer or GreatUXPathCompleter(
-        get_paths=get_paths,
-        only_directories=only_directories,
-        file_filter=file_filter,
-        expanduser=True,
-    )
-
-    bindings = KeyBindings()
-
-    @bindings.add(Keys.ControlM, eager=True)
-    def set_answer(event: KeyPressEvent):
-        if event.current_buffer.complete_state is not None:
-            event.current_buffer.complete_state = None
-        elif event.app.current_buffer.validate(set_cursor=True):
-            # When the validation succeeded, accept the input.
-            result_path = event.app.current_buffer.document.text
-            if result_path.endswith(os.path.sep):
-                result_path = result_path[:-1]
-
-            event.app.exit(result=result_path)
-            event.app.current_buffer.append_to_history()
-
-    @bindings.add(os.path.sep, eager=True)
-    def next_segment(event: KeyPressEvent):
-        b = event.app.current_buffer
-
-        if b.complete_state:
-            b.complete_state = None
-
-        current_path = b.document.text
-        if not current_path.endswith(os.path.sep):
-            b.insert_text(os.path.sep)
-
-        b.start_completion(select_first=False)
-
-    p: PromptSession = PromptSession(
-        get_prompt_tokens,
-        lexer=SimpleLexer("class:answer"),
-        style=merged_style,
-        completer=completer,
-        validator=validator,
-        complete_style=complete_style,
-        key_bindings=bindings,
-        **kwargs,
-    )
-    p.default_buffer.reset(Document(str(default)))
-
-    return Question(p.app)
+    pass

@@ -66,14 +66,4 @@ def rawselect(
     Returns:
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
     """
-    return select.select(
-        message,
-        choices,
-        default,
-        qmark,
-        pointer,
-        style,
-        use_shortcuts=True,
-        use_arrow_keys=False,
-        **kwargs,
-    )
+    pass
